@@ -8,6 +8,7 @@ import http from "http"
 import { Server } from "socket.io"
 import { SocketIo } from "./Services/socket"
 import { SocketController } from "./Services/socket-controller"
+import { authenticate, sameOrigin } from "./Middleware/io-middleware"
 
 dotenv.config()
 const app = express()
@@ -21,6 +22,10 @@ app.use(helmet())
 app.use(morgan('dev'))
 app.use(cors())
 app.use(bodyParser.json({limit: "1mb"}))
+
+//middleware to prevent CSWSH and authenticate connections
+io.use(sameOrigin)
+io.use(authenticate)
 
 
 //Socket io controllers
