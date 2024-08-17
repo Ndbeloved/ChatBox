@@ -1,6 +1,8 @@
-
+import dotenv from "dotenv"
+dotenv.config()
 
 export const corsCustomOption: Record<string, any> = {
-    origin: "*",
-    methods: ["GET", "POST"]
+    origin: process.env.SITE_URL,
+    methods: ["GET", "POST"],
+    credentials: true,
 }

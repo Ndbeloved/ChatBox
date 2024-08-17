@@ -5,15 +5,19 @@ export function SocketController(io: Server){
     io.on("connection", (socket)=>{
         console.log(`New user ${socket.id} connected...`)
 
-        //join room
-        socket.on("join", (userID)=>{
-            socket.join(userID)
-            console.log(`User with id ${socket.id} joined the room ${userID}`)
-        })
+        //get userID
+        const { userID, user } = socket.data.user
 
-        socket.on("private_message", (data)=>{
-            const { receiverID, senderID, message, chatID }  = data
-            io.to(chatID).emit('receive_message', {senderID, message})
+
+        //join your chat
+        socket.join(userID)
+
+        socket.on("privateMessage", (data)=>{
+            const { recipientID, message }  = data
+            io.to(recipientID).emit('privateMessage', {
+                sender: user.username || "demo",
+                message,
+            })
         })
     
         socket.on("disconnect", ()=>{
