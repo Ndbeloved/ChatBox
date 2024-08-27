@@ -62,9 +62,20 @@ export async function getUserName(username: string){
     }
 }
 
-export async function getUsers(){
+export async function getUsers(id: string){
     try{
-        const users = await UserModel.find()
+        const users = await UserModel.find({_id: {$ne: id}})
+        return users
+    }
+    catch(error){
+        console.error(error)
+        return false
+    }
+}
+
+export async function deleteUserID(id: string){
+    try{
+        const users = await UserModel.findByIdAndDelete(id)
         return users
     }
     catch(error){

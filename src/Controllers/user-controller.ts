@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { createUser, getUserName } from "../Models/user-model";
+import { createUser, deleteUserID, getUserName, getUsers } from "../Models/user-model";
 import { signToken } from "../Utils/JWTtoken";
+
+interface CustomRequest extends Request{
+    user?: any
+}
 
 
 export async function registerLoginController(req: Request, res: Response, next: NextFunction){
@@ -25,7 +29,7 @@ export async function registerLoginController(req: Request, res: Response, next:
             sameSite: 'lax' //for development
         })
     
-        return res.status(200).json({message: "Cookie set successfuly"})
+        return res.status(200).json({message: "Cookie set successfuly", user: payload.user})
     }
 
     //if not, create user
@@ -49,5 +53,30 @@ export async function registerLoginController(req: Request, res: Response, next:
         sameSite: 'lax' //for development
     })
 
-    res.status(200).json({message: "Cookie set successfuly"})
+    res.status(200).json({message: "Cookie set successfuly", user: payload.user})
+}
+
+
+export async function deleteUserController(req: CustomRequest, res: Response, next: NextFunction){
+    try{
+        const userObj = req.user
+        const user = await deleteUserID(userObj._id)
+        res.status(200).json({message: "User deleted successfully"})
+    }
+    catch(error){
+        console.error(error)
+        res.status(500).json({success: false, message: "failed to delete"})
+    }
+}
+
+export async function getAllUsersController(req: CustomRequest, res: Response, next: NextFunction){
+    try{
+        const userObj = req.user
+        const users = await getUsers(userObj._id)
+        res.status(200).json({success: true, data: users})
+    }
+    catch(error){
+        console.error(error)
+        res.status(500).json({message: "Failed to get all users"})
+    }
 }

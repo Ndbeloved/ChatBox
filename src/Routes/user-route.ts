@@ -1,5 +1,6 @@
 import express from "express"
-import { registerLoginController } from "../Controllers/user-controller"
+import { deleteUserController, getAllUsersController, registerLoginController } from "../Controllers/user-controller"
+import { isAuthenticated } from "../Middleware/auth-middleware"
 
 const router = express.Router()
 
@@ -10,6 +11,10 @@ const router = express.Router()
  * @Protected False
  */
 router.post('/login', registerLoginController)
+
+router.get('/allusers', isAuthenticated, getAllUsersController)
+
+router.post('/delete', isAuthenticated, deleteUserController)
 
 
 /**
