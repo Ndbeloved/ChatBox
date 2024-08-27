@@ -9,5 +9,4 @@ dotenv_1.default.config();
 exports.corsCustomOption = {
     origin: process.env.SITE_URL,
     methods: ["GET", "POST"],
-    credentials: true,
 };
