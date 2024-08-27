@@ -22,14 +22,13 @@ export async function registerLoginController(req: Request, res: Response, next:
 
         const token =  signToken(payload)
 
-        res.cookie('authToken', token , {
-            httpOnly: true,
-            // domain: process.env.SITE_URL,
-            secure: true,
-            sameSite: 'none' //for development
-        })
+        // res.cookie('authToken', token , {
+        //     httpOnly: true,
+        //     // secure: true,
+        //     sameSite: 'lax' //for development
+        // })
     
-        return res.status(200).json({message: "Cookie set successfuly", user: payload.user})
+        return res.status(200).json({message: "Cookie set successfuly", user: payload.user, token})
     }
 
     //if not, create user
@@ -46,14 +45,13 @@ export async function registerLoginController(req: Request, res: Response, next:
     }
 
     const token = signToken(payload)
-    res.cookie('authToken', token , {
-        httpOnly: true,
-        // domain: process.env.SITE_URL,
-        secure: true,
-        sameSite: 'none' //for development
-    })
+    // res.cookie('authToken', token , {
+    //     httpOnly: true,
+    //     // secure: true,
+    //     sameSite: 'lax' //for development
+    // })
 
-    res.status(200).json({message: "Cookie set successfuly", user: payload.user})
+    res.status(200).json({message: "Cookie set successfuly", user: payload.user, token})
 }
 
 

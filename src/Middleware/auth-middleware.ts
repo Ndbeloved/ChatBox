@@ -7,7 +7,8 @@ interface CustomRequest extends Request{
 
 export function isAuthenticated(req: CustomRequest, res: Response, next: NextFunction ){
 
-    const token = req.cookies["authToken"]
+    const token = req.headers["authorization"] || null
+    console.log("token: ", token)
     if(!token){
         return res.status(403).json({success: false, message: "provide auth token"})
     }

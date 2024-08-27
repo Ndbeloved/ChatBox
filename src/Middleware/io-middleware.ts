@@ -1,7 +1,6 @@
 import { Socket } from "socket.io";
 import { ExtendedError } from "socket.io/dist/namespace";
 import { verifyToken } from "../Utils/JWTtoken";
-import cookie from "cookie"
 
 
 export const sameOrigin = (socket: Socket, next: (err?: ExtendedError)=> void)=>{
@@ -14,13 +13,11 @@ export const sameOrigin = (socket: Socket, next: (err?: ExtendedError)=> void)=>
 }
 
 export const authenticate = (socket: Socket, next: (err?: ExtendedError) => void)=>{
-    const cookies = socket.request.headers.cookie
+    const { tokens } = socket.handshake.auth
 
-    if(cookies){
-        const parsedCookie = cookie.parse(cookies)
-        const authToken = parsedCookie['authToken']
-        if(authToken && verifyToken(authToken)){
-            const payload = verifyToken(authToken)
+    if(tokens){
+        if(tokens && verifyToken(tokens)){
+            const payload = verifyToken(tokens)
             socket.data.user = payload
             return next()
         }

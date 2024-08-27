@@ -27,7 +27,6 @@ app.use(morgan('dev'))
 app.use(cookieParser())
 app.use(cors({
     origin: process.env.SITE_URL,
-    credentials: true
 }))
 app.use(bodyParser.json({limit: "1mb"}))
 
