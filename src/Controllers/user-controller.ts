@@ -24,7 +24,7 @@ export async function registerLoginController(req: Request, res: Response, next:
 
         res.cookie('authToken', token , {
             httpOnly: true,
-            domain: process.env.SITE_URL,
+            // domain: process.env.SITE_URL,
             secure: true,
             sameSite: 'none' //for development
         })
@@ -48,7 +48,7 @@ export async function registerLoginController(req: Request, res: Response, next:
     const token = signToken(payload)
     res.cookie('authToken', token , {
         httpOnly: true,
-        domain: process.env.SITE_URL,
+        // domain: process.env.SITE_URL,
         secure: true,
         sameSite: 'none' //for development
     })
