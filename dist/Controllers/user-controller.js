@@ -27,9 +27,9 @@ function registerLoginController(req, res, next) {
             const token = (0, JWTtoken_1.signToken)(payload);
             res.cookie('authToken', token, {
                 httpOnly: true,
-                // domain: process.env.SITE_URL,
-                secure: false,
-                sameSite: 'lax' //for development
+                domain: process.env.SITE_URL,
+                secure: true,
+                sameSite: 'none' //for development
             });
             return res.status(200).json({ message: "Cookie set successfuly", user: payload.user });
         }
@@ -47,9 +47,9 @@ function registerLoginController(req, res, next) {
         const token = (0, JWTtoken_1.signToken)(payload);
         res.cookie('authToken', token, {
             httpOnly: true,
-            // domain: process.env.SITE_URL,
-            secure: false,
-            sameSite: 'lax' //for development
+            domain: process.env.SITE_URL,
+            secure: true,
+            sameSite: 'none' //for development
         });
         res.status(200).json({ message: "Cookie set successfuly", user: payload.user });
     });
