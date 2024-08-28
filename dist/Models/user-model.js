@@ -101,6 +101,7 @@ function getUsers(id) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const users = yield UserModel.find({ _id: { $ne: id } });
+            console.log(`id: ${id}`);
             return users;
         }
         catch (error) {

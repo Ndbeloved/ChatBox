@@ -22,11 +22,11 @@ function SocketController(io) {
         //get userID
         const { userID, user } = socket.data.user;
         const userName = user.username;
-        connectedSockets.push({
-            socketId: socket.id,
-            userName: user.username
-        });
-        console.log("sockets connected: ", connectedSockets);
+        // connectedSockets.push({
+        //     socketId: socket.id,
+        //     userName: user.username
+        // })
+        // console.log("sockets connected: ", connectedSockets)
         //join your chat
         socket.join(userID);
         io.to(userID).emit("messageCount", { unread: yield (0, message_model_1.getUnreadCountsBySender)(userID) });
