@@ -53,6 +53,7 @@ function SocketController(io) {
         }
         socket.on('newOffer', (data) => {
             const { recipientID, newOffer } = data;
+            console.log(recipientID);
             offers.push({
                 offererUserName: user.username,
                 offer: newOffer,
