@@ -65,6 +65,7 @@ export async function getUserName(username: string){
 export async function getUsers(id: string){
     try{
         const users = await UserModel.find({_id: {$ne: id}})
+        console.log(`id: ${id}`)
         return users
     }
     catch(error){
