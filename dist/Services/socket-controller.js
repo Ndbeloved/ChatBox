@@ -26,6 +26,7 @@ function SocketController(io) {
             socketId: socket.id,
             userName: user.username
         });
+        console.log("sockets connected: ", connectedSockets);
         //join your chat
         socket.join(userID);
         io.to(userID).emit("messageCount", { unread: yield (0, message_model_1.getUnreadCountsBySender)(userID) });

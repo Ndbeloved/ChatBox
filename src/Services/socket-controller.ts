@@ -36,6 +36,8 @@ export function SocketController(io: Server){
             userName: user.username
         })
 
+        console.log("sockets connected: ", connectedSockets)
+
 
         //join your chat
         socket.join(userID)
