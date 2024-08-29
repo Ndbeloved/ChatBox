@@ -118,7 +118,7 @@ function SocketController(io) {
                 //this ice is coming from the answerer. Send to the offerer
                 //pass it through to the other socket
                 const offerInOffers = offers.find(o => o.answererUserName === iceUserName);
-                console.log("line 143: ", offerInOffers);
+                console.log("line 143: ", offerInOffers, "offers array: ", offers);
                 const socketToSendTo = connectedSockets.find(s => s.userName === (offerInOffers === null || offerInOffers === void 0 ? void 0 : offerInOffers.offererUserName));
                 console.log("line 145: ", socketToSendTo);
                 if (socketToSendTo) {
