@@ -139,8 +139,10 @@ export function SocketController(io: Server){
             }else{
                 //this ice is coming from the answerer. Send to the offerer
                 //pass it through to the other socket
-                const offerInOffers = offers.find(o=>o.answererUserName === iceUserName);
+                const offerInOffers = offers.find(o => o.answererUserName === iceUserName);
+                console.log("line 143: ", offerInOffers)
                 const socketToSendTo = connectedSockets.find(s=>s.userName === offerInOffers?.offererUserName);
+                console.log("line 145: ", socketToSendTo)
                 if(socketToSendTo){
                     socket.to(socketToSendTo.socketId).emit('receivedIceCandidateFromServer',iceCandidate)
                 }else{
