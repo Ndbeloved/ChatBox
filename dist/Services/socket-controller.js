@@ -130,6 +130,10 @@ function SocketController(io) {
         });
         socket.on("disconnect", () => {
             console.log(`User ${socket.id} left the connection...`);
+            const index = connectedSockets.findIndex(s => s.socketId === socket.id);
+            if (index !== -1) {
+                connectedSockets.splice(index, 1);
+            }
         });
     }));
 }
