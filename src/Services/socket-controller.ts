@@ -110,7 +110,7 @@ export function SocketController(io: Server){
             //send back to the answerer all the iceCandidates we have already collected
             ackFunction(offerToUpdate.offerIceCandidates);
             offerToUpdate.answer = offerObj.answer
-            offerToUpdate.answererUserName = userName
+            offerToUpdate.answererUserName = userID
             //socket has a .to() which allows emiting to a "room"
             //every socket has it's own room
             socket.to(socketIdToAnswer).emit('answerResponse',offerToUpdate)
