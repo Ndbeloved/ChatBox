@@ -33,10 +33,10 @@ export function SocketController(io: Server){
 
         connectedSockets.push({
             socketId: socket.id,
-            userName: user.username
+            userName: user._id
         })
 
-        // console.log("sockets connected: ", connectedSockets)
+        console.log("sockets connected: ", connectedSockets)
 
 
         //join your chat
