@@ -12,10 +12,16 @@ import { SocketController } from "./Services/socket-controller"
 import { authenticate, sameOrigin } from "./Middleware/io-middleware"
 import mongoose from "mongoose"
 import { UserRoute } from "./Routes/user-route"
+// import https from "https"
+// import fs from "fs"
 
 dotenv.config()
 const app = express()
+// app.use(express.static(__dirname))
+// const key = fs.readFileSync("cert.key")
+// const cert = fs.readFileSync("cert.crt")
 const server = http.createServer(app)
+// const server = https.createServer({key, cert}, app)
 const PORT = process.env.PORT || 3000
 const dbURL = process.env.MONGO_URL || 'null'
 

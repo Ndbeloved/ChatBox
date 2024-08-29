@@ -76,7 +76,7 @@ export function SocketController(io: Server){
 
         socket.on('newOffer',(data)=>{
             const { recipientID, newOffer} = data
-            console.log(recipientID)
+            console.log("new offer: ", recipientID)
             offers.push({
                 offererUserName: user.username,
                 offer: newOffer,

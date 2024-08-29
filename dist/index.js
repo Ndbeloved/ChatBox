@@ -16,9 +16,15 @@ const socket_controller_1 = require("./Services/socket-controller");
 const io_middleware_1 = require("./Middleware/io-middleware");
 const mongoose_1 = __importDefault(require("mongoose"));
 const user_route_1 = require("./Routes/user-route");
+// import https from "https"
+// import fs from "fs"
 dotenv_1.default.config();
 const app = (0, express_1.default)();
+// app.use(express.static(__dirname))
+// const key = fs.readFileSync("cert.key")
+// const cert = fs.readFileSync("cert.crt")
 const server = http_1.default.createServer(app);
+// const server = https.createServer({key, cert}, app)
 const PORT = process.env.PORT || 3000;
 const dbURL = process.env.MONGO_URL || 'null';
 //setting up server with socket.io
