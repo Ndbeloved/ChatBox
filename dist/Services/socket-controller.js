@@ -119,7 +119,7 @@ function SocketController(io) {
                 //pass it through to the other socket
                 console.log("ice name: ", iceUserName);
                 const offerInOffers = offers.find(o => o.answererUserName === iceUserName);
-                console.log("line 143: ", offerInOffers, "offers array: ", offers);
+                console.log("line 143: ", offerInOffers);
                 const socketToSendTo = connectedSockets.find(s => s.userName === (offerInOffers === null || offerInOffers === void 0 ? void 0 : offerInOffers.offererUserName));
                 console.log("line 145: ", socketToSendTo);
                 if (socketToSendTo) {
