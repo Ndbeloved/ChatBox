@@ -55,7 +55,6 @@ export function SocketController(io: Server){
         socket.on("markAsRead", async(data)=>{
             const { receiverID, senderID} = data
             if(receiverID && senderID){
-                console.log("read by: ", senderID)
                 await markMessagesRead(senderID, receiverID)
                 io.to(userID).emit("messageCount", {unread: await getUnreadCountsBySender(userID)})
             }
@@ -76,7 +75,6 @@ export function SocketController(io: Server){
 
         socket.on('newOffer',(data)=>{
             const { recipientID, newOffer} = data
-            console.log("new offer: ", recipientID)
             offers.push({
                 offererUserName: userID,
                 offer: newOffer,
@@ -91,7 +89,7 @@ export function SocketController(io: Server){
         })
     
         socket.on('newAnswer',(offerObj,ackFunction)=>{
-            console.log(offerObj);
+            // console.log(offerObj);
             //emit this answer (offerObj) back to CLIENT1
             //in order to do that, we need CLIENT1's socketid
             const socketToAnswer = connectedSockets.find(s=>s.userName === offerObj.offererUserName)
@@ -101,6 +99,7 @@ export function SocketController(io: Server){
             }
             //we found the matching socket, so we can emit to it!
             const socketIdToAnswer = socketToAnswer.socketId;
+            console.log("socketToAnswer: ", socketIdToAnswer, "offererUSername: ",offerObj.offererUserName)
             //we find the offer to update so we can emit it
             const offerToUpdate = offers.find(o=>o.offererUserName === offerObj.offererUserName)
             if(!offerToUpdate){
@@ -141,9 +140,7 @@ export function SocketController(io: Server){
                 //pass it through to the other socket
                 console.log("ice name: ",iceUserName)
                 const offerInOffers = offers.find(o => o.answererUserName === iceUserName);
-                console.log("line 143: ", offerInOffers)
                 const socketToSendTo = connectedSockets.find(s=>s.userName === offerInOffers?.offererUserName);
-                console.log("line 145: ", socketToSendTo)
                 if(socketToSendTo){
                     socket.to(socketToSendTo.socketId).emit('receivedIceCandidateFromServer',iceCandidate)
                 }else{
