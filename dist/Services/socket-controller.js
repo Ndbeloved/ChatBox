@@ -130,6 +130,8 @@ function SocketController(io) {
         });
         socket.on("callEnded", (data) => {
             const { offerUsername, feedbackID } = data;
+            console.log("offerUsername endCall: ", offerUsername);
+            console.log("feedbackID endCall: ", feedbackID);
             const answerer = offerUsername === feedbackID ? true : false;
             const index = offers.findIndex(offer => offer.offererUserName === offerUsername);
             if (index !== -1) {
