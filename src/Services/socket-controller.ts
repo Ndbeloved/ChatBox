@@ -149,13 +149,33 @@ export function SocketController(io: Server){
             }
             // console.log(offers)
         })
+
+        socket.on("callEnded", (data)=>{
+            const { offerUsername, feedbackID } = data
+            const answerer = offerUsername === feedbackID ? true : false
+            const index = offers.findIndex(offer => offer.offererUserName === offerUsername);
+            if (index !== -1) {
+                offers.splice(index, 1);
+            }
+            io.to(feedbackID).emit("callEnd", {answerer})
+        })
     
         socket.on("disconnect", ()=>{
             console.log(`User ${socket.id} left the connection...`)
+            connectedSockets.map(s =>{
+                const connection = connectedSockets.find(s=> s.socketId === socket.id)
+                const offerName = connection?.userName
+                const index = offers.findIndex(offer => offer.offererUserName === offerName);
+                if (index !== -1) {
+                    offers.splice(index, 1);
+                }
+                console.log("cleaned up offer")
+            })
             const index = connectedSockets.findIndex(s => s.socketId === socket.id);
             if (index !== -1) {
                 connectedSockets.splice(index, 1);
             }
+            console.log("cleaned up connected sockets")
         })
     })
 }
