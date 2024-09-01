@@ -86,12 +86,13 @@ function getUnreadCountsBySender(userID) {
         try {
             const unreadCounts = yield MessageModel.aggregate([
                 { $match: {
-                        isRead: false,
                         receiverID: new mongoose_1.default.Types.ObjectId(userID)
                     } }, //filtering only unread messages
                 { $group: {
                         _id: "$senderID",
-                        count: { $sum: 1 }
+                        count: { $sum: { $cond: [{ $eq: ["$isRead", false] }, 1, 0] } }, // Count unread messages per sender
+                        totalMessages: { $sum: 1 }, // Count all messages per sender
+                        latestMessage: { $last: "$$ROOT" }, // Keep the latest message
                     } }, //group by senderID and count unread messages
                 {
                     $lookup: {
@@ -105,14 +106,27 @@ function getUnreadCountsBySender(userID) {
                     $unwind: "$senderInfo"
                 },
                 {
+                    $sort: {
+                        "latestMessage.createdAt": -1, // Sort by the time of the latest message in descending order
+                    },
+                },
+                {
                     $project: {
+                        senderID: "$_id",
                         senderName: "$senderInfo.username",
                         count: 1,
+                        totalMessages: 1,
+                        latestMessage: 1,
                     }
                 }
             ]);
             const results = unreadCounts.reduce((acc, curr) => {
-                acc[curr.senderName] = curr.count;
+                acc[curr.senderName] = {
+                    senderID: curr.senderID,
+                    count: curr.count,
+                    totalMessages: curr.totalMessages,
+                    latestMessage: curr.latestMessage,
+                };
                 return acc;
             }, {});
             return results;
