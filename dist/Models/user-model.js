@@ -32,6 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.searchByExactSubstring = void 0;
 exports.createUser = createUser;
 exports.getUserID = getUserID;
 exports.getUserName = getUserName;
@@ -122,3 +123,17 @@ function deleteUserID(id) {
         }
     });
 }
+const searchByExactSubstring = (searchTerm) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const regex = new RegExp(`\\b${searchTerm}\\b`, 'i');
+        // Query the database
+        const results = yield UserModel.find({ username: { $regex: regex } });
+        console.log(results);
+        return results;
+    }
+    catch (error) {
+        console.error('Error searching for documents:', error);
+        return [];
+    }
+});
+exports.searchByExactSubstring = searchByExactSubstring;

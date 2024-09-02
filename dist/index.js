@@ -45,7 +45,6 @@ io.use(io_middleware_1.authenticate);
 app.use("/auth/user", user_route_1.UserRoute);
 app.get('/', (req, res) => {
     const authToken = req.cookies['authToken'];
-    console.log("Get token: ", authToken);
     res.status(200).json({ message: "getting cookies" });
 });
 app.use((req, res, next) => {

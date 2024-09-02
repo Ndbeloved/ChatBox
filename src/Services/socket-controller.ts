@@ -1,5 +1,6 @@
 import { Server } from "socket.io";
 import { getCountForUser, getUnreadCountsBySender, markMessagesRead, saveMessage } from "../Models/message-model";
+import { searchByExactSubstring } from "../Models/user-model";
 
 interface IOffer{
     offererUserName: string
@@ -26,6 +27,7 @@ const connectedSockets: IConnnectedSockets[] = [
 export function SocketController(io: Server){
     io.on("connection", async(socket)=>{
         console.log(`New user ${socket.id} connected...`)
+        
 
         //get userID
         const { userID, user } = socket.data.user
@@ -35,6 +37,8 @@ export function SocketController(io: Server){
             socketId: socket.id,
             userName: user._id
         })
+
+        io.emit("newUser", connectedSockets)
 
         console.log("sockets connected: ", connectedSockets)
 
@@ -59,6 +63,12 @@ export function SocketController(io: Server){
                 await markMessagesRead(senderID, receiverID)
                 io.to(userID).emit("messageCount", {unread: await getUnreadCountsBySender(userID)})
             }
+        })
+
+        socket.on("search", async(data)=>{
+            const { searchTerm } = data
+            const results = await searchByExactSubstring(searchTerm)
+            io.to(userID).emit("searchResult", results)
         })
 
 
@@ -165,20 +175,21 @@ export function SocketController(io: Server){
     
         socket.on("disconnect", ()=>{
             console.log(`User ${socket.id} left the connection...`)
+            io.emit("userLeft", userID)
             connectedSockets.map(s =>{
                 const connection = connectedSockets.find(s=> s.socketId === socket.id)
                 const offerName = connection?.userName
                 const index = offers.findIndex(offer => offer.offererUserName === offerName);
                 if (index !== -1) {
-                    offers.splice(index, 1);
+                    offers.splice(index, 1)
+                    console.log("cleaned up offer")
                 }
-                console.log("cleaned up offer")
             })
             const index = connectedSockets.findIndex(s => s.socketId === socket.id);
             if (index !== -1) {
-                connectedSockets.splice(index, 1);
+                connectedSockets.splice(index, 1)
+                console.log("cleaned up connected sockets")
             }
-            console.log("cleaned up connected sockets")
         })
     })
 }

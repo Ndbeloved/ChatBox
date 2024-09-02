@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SocketController = SocketController;
 const message_model_1 = require("../Models/message-model");
+const user_model_1 = require("../Models/user-model");
 //offers will contain {}
 const offers = [];
 const connectedSockets = [
@@ -26,6 +27,7 @@ function SocketController(io) {
             socketId: socket.id,
             userName: user._id
         });
+        io.emit("newUser", connectedSockets);
         console.log("sockets connected: ", connectedSockets);
         //join your chat
         socket.join(userID);
@@ -45,6 +47,11 @@ function SocketController(io) {
                 yield (0, message_model_1.markMessagesRead)(senderID, receiverID);
                 io.to(userID).emit("messageCount", { unread: yield (0, message_model_1.getUnreadCountsBySender)(userID) });
             }
+        }));
+        socket.on("search", (data) => __awaiter(this, void 0, void 0, function* () {
+            const { searchTerm } = data;
+            const results = yield (0, user_model_1.searchByExactSubstring)(searchTerm);
+            io.to(userID).emit("searchResult", results);
         }));
         //////////////////////////////////////Video calls////////////////////////////////////////
         //a new client has joined. If there are any offers available,
@@ -142,20 +149,21 @@ function SocketController(io) {
         });
         socket.on("disconnect", () => {
             console.log(`User ${socket.id} left the connection...`);
+            io.emit("userLeft", userID);
             connectedSockets.map(s => {
                 const connection = connectedSockets.find(s => s.socketId === socket.id);
                 const offerName = connection === null || connection === void 0 ? void 0 : connection.userName;
                 const index = offers.findIndex(offer => offer.offererUserName === offerName);
                 if (index !== -1) {
                     offers.splice(index, 1);
+                    console.log("cleaned up offer");
                 }
-                console.log("cleaned up offer");
             });
             const index = connectedSockets.findIndex(s => s.socketId === socket.id);
             if (index !== -1) {
                 connectedSockets.splice(index, 1);
+                console.log("cleaned up connected sockets");
             }
-            console.log("cleaned up connected sockets");
         });
     }));
 }

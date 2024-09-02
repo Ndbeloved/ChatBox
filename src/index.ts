@@ -50,7 +50,6 @@ app.use("/auth/user", UserRoute)
 
 app.get('/', (req: Request, res: Response)=>{
     const authToken = req.cookies['authToken']
-    console.log("Get token: ", authToken)
     res.status(200).json({message: "getting cookies"})
 })
 

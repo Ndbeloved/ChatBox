@@ -84,3 +84,18 @@ export async function deleteUserID(id: string){
         return false
     }
 }
+
+export const searchByExactSubstring = async (searchTerm: string) => {
+    try {
+      const regex = new RegExp(`\\b${searchTerm}\\b`, 'i')
+  
+      // Query the database
+      const results = await UserModel.find({ username: { $regex: regex } })
+      console.log(results)
+  
+      return results;
+    } catch (error) {
+      console.error('Error searching for documents:', error);
+      return [];
+    }
+  };
