@@ -50,6 +50,7 @@ export function SocketController(io: Server){
             await saveMessage(sender, recipientID, message, replied, image )
             //Notify receiver with the new message and updated count
             io.to(recipientID).emit("messageCount", {unread: await getUnreadCountsBySender(recipientID)})
+            io.to(userID).emit("messageCount", {unread: await getUnreadCountsBySender(userID)})
         })
 
         socket.on("markAsRead", async(data)=>{

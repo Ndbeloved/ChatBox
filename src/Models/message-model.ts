@@ -52,34 +52,48 @@ export async function getUnreadCountsBySender(userID: string){
     try{
         const unreadCounts = await MessageModel.aggregate([
             { $match: { 
-                receiverID: new mongoose.Types.ObjectId(userID)
+                $or: [
+                    { receiverID: new mongoose.Types.ObjectId(userID) }, // User is the receiver
+                    { senderID: new mongoose.Types.ObjectId(userID) }    // User is the sender
+                ]
             }}, //filtering only unread messages
             { $group: {
-                _id: "$senderID",
-                count: { $sum: { $cond: [{ $eq: ["$isRead", false] }, 1, 0] } }, // Count unread messages per sender
-                totalMessages: { $sum: 1 }, // Count all messages per sender
-                latestMessage: { $last: "$$ROOT" }, // Keep the latest message
-            }}, //group by senderID and count unread messages
+                    _id: {
+                        $cond: [
+                        { $eq: ["$receiverID", new mongoose.Types.ObjectId(userID)] },
+                        "$senderID",
+                        "$receiverID"
+                        ]
+                    },  // Group by the opposite party
+                    count: {
+                        $sum: {
+                            $cond: [{ $and: [{ $eq: ["$isRead", false] }, { $eq: ["$receiverID", new mongoose.Types.ObjectId(userID)] }] }, 1, 0]
+                        }
+                    }, // Count unread messages for this user
+                    totalMessages: { $sum: 1 }, // Count all messages with this user
+                    latestMessage: { $last: "$$ROOT" }, // Keep the latest message (sent or received)
+                }
+            }, //group by senderID and count unread messages
             {
                 $lookup: {
                     from: "users",
                     localField: "_id",
                     foreignField: "_id",
-                    as: "senderInfo"
+                    as: "userInfo"
                 }
             },
             {
-                $unwind: "$senderInfo"
+                $unwind: "$userInfo"
             },
             {
                 $sort: {
-                  "latestMessage.createdAt": -1, // Sort by the time of the latest message in descending order
+                  "latestMessage.timestamp": -1, // Sort by the time of the latest message in descending order
                 },
             },
             {
                 $project: {
                     senderID: "$_id",
-                    senderName: "$senderInfo.username",
+                    senderName: "$userInfo.username",
                     count: 1, 
                     totalMessages: 1,
                     latestMessage: 1,

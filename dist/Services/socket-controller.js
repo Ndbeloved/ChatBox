@@ -37,6 +37,7 @@ function SocketController(io) {
             yield (0, message_model_1.saveMessage)(sender, recipientID, message, replied, image);
             //Notify receiver with the new message and updated count
             io.to(recipientID).emit("messageCount", { unread: yield (0, message_model_1.getUnreadCountsBySender)(recipientID) });
+            io.to(userID).emit("messageCount", { unread: yield (0, message_model_1.getUnreadCountsBySender)(userID) });
         }));
         socket.on("markAsRead", (data) => __awaiter(this, void 0, void 0, function* () {
             const { receiverID, senderID } = data;
