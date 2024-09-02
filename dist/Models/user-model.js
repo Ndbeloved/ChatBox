@@ -39,6 +39,7 @@ exports.getUserName = getUserName;
 exports.getUsers = getUsers;
 exports.deleteUserID = deleteUserID;
 const mongoose_1 = __importStar(require("mongoose"));
+const message_model_1 = require("./message-model");
 const UserSchema = new mongoose_1.Schema({
     username: {
         type: String,
@@ -123,12 +124,21 @@ function deleteUserID(id) {
         }
     });
 }
-const searchByExactSubstring = (searchTerm) => __awaiter(void 0, void 0, void 0, function* () {
+const searchByExactSubstring = (searchTerm, userId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const regex = new RegExp(`\\b${searchTerm}\\b`, 'i');
+        const regex = new RegExp(searchTerm, 'i');
+        // Escape special characters in searchTerm for safe regex creation
+        const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        // Find all unique user IDs you have sent or received messages from
+        const messagedUserIds = yield message_model_1.MessageModel.distinct("senderID", { receiverID: new mongoose_1.default.Types.ObjectId(userId) });
+        const receivedUserIds = yield message_model_1.MessageModel.distinct("receiverID", { senderID: new mongoose_1.default.Types.ObjectId(userId) });
+        // Combine these IDs into a single set to avoid duplicates
+        const excludedUserIds = new Set([...messagedUserIds, ...receivedUserIds]);
         // Query the database
-        const results = yield UserModel.find({ username: { $regex: regex } });
-        console.log(results);
+        const results = yield UserModel.find({
+            username: { $regex: regex },
+            _id: { $nin: Array.from(excludedUserIds) },
+        });
         return results;
     }
     catch (error) {

@@ -50,7 +50,7 @@ function SocketController(io) {
         }));
         socket.on("search", (data) => __awaiter(this, void 0, void 0, function* () {
             const { searchTerm } = data;
-            const results = yield (0, user_model_1.searchByExactSubstring)(searchTerm);
+            const results = yield (0, user_model_1.searchByExactSubstring)(searchTerm, userID);
             io.to(userID).emit("searchResult", results);
         }));
         //////////////////////////////////////Video calls////////////////////////////////////////

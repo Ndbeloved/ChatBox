@@ -69,7 +69,6 @@ function getAllUsersController(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const userObj = req.user;
-            console.log(`all users controller: ${userObj}`);
             const users = yield (0, user_model_1.getUsers)(userObj._id);
             res.status(200).json({ success: true, data: users });
         }

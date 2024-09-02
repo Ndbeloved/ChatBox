@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose"
 import { ICreateUserPayload } from "../Interface/user-model-interface"
+import { MessageModel } from "./message-model"
 
 
 const UserSchema = new Schema({
@@ -85,17 +86,28 @@ export async function deleteUserID(id: string){
     }
 }
 
-export const searchByExactSubstring = async (searchTerm: string) => {
+export const searchByExactSubstring = async (searchTerm: string, userId: string) => {
     try {
-      const regex = new RegExp(`\\b${searchTerm}\\b`, 'i')
+        const regex = new RegExp(searchTerm, 'i')
+        // Escape special characters in searchTerm for safe regex creation
+        const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+         // Find all unique user IDs you have sent or received messages from
+        const messagedUserIds = await MessageModel.distinct("senderID", { receiverID: new mongoose.Types.ObjectId(userId) })
+        const receivedUserIds = await MessageModel.distinct("receiverID", { senderID: new mongoose.Types.ObjectId(userId) })
+
+        // Combine these IDs into a single set to avoid duplicates
+        const excludedUserIds = new Set([...messagedUserIds, ...receivedUserIds]);
+        
+        // Query the database
+        const results = await UserModel.find({ 
+            username: { $regex: regex },
+            _id: { $nin: Array.from(excludedUserIds) },
+        })
   
-      // Query the database
-      const results = await UserModel.find({ username: { $regex: regex } })
-      console.log(results)
-  
-      return results;
+        return results;
     } catch (error) {
-      console.error('Error searching for documents:', error);
-      return [];
+        console.error('Error searching for documents:', error);
+        return [];
     }
   };

@@ -32,6 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MessageModel = void 0;
 exports.markMessagesRead = markMessagesRead;
 exports.getUnreadCountsBySender = getUnreadCountsBySender;
 exports.getCountForUser = getCountForUser;
@@ -68,11 +69,11 @@ const messageSchema = new mongoose_1.Schema({
         type: String,
     }
 });
-const MessageModel = mongoose_1.default.model("messages", messageSchema);
+exports.MessageModel = mongoose_1.default.model("messages", messageSchema);
 function markMessagesRead(senderID, receiverID) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            yield MessageModel.updateMany({ senderID: receiverID, receiverID: senderID, isRead: false }, { $set: { isRead: true } });
+            yield exports.MessageModel.updateMany({ senderID: receiverID, receiverID: senderID, isRead: false }, { $set: { isRead: true } });
             return true;
         }
         catch (error) {
@@ -84,7 +85,7 @@ function markMessagesRead(senderID, receiverID) {
 function getUnreadCountsBySender(userID) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const unreadCounts = yield MessageModel.aggregate([
+            const unreadCounts = yield exports.MessageModel.aggregate([
                 { $match: {
                         $or: [
                             { receiverID: new mongoose_1.default.Types.ObjectId(userID) }, // User is the receiver
@@ -154,7 +155,7 @@ function getUnreadCountsBySender(userID) {
 function getCountForUser(userID) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const count = yield MessageModel.countDocuments({ receiverID: userID, isRead: false });
+            const count = yield exports.MessageModel.countDocuments({ receiverID: userID, isRead: false });
             return count;
         }
         catch (error) {
@@ -165,7 +166,7 @@ function getCountForUser(userID) {
 }
 function saveMessage(senderID, receiverID, content, replied, image) {
     return __awaiter(this, void 0, void 0, function* () {
-        const message = new MessageModel({
+        const message = new exports.MessageModel({
             senderID,
             receiverID,
             content,

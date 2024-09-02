@@ -34,7 +34,7 @@ const messageSchema = new Schema({
 })
 
 
-const MessageModel = mongoose.model("messages", messageSchema)
+export const MessageModel = mongoose.model("messages", messageSchema)
 
 export async function markMessagesRead(senderID: String , receiverID: String){
     try{

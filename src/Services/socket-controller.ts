@@ -67,7 +67,7 @@ export function SocketController(io: Server){
 
         socket.on("search", async(data)=>{
             const { searchTerm } = data
-            const results = await searchByExactSubstring(searchTerm)
+            const results = await searchByExactSubstring(searchTerm, userID)
             io.to(userID).emit("searchResult", results)
         })
 

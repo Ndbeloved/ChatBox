@@ -70,7 +70,6 @@ export async function deleteUserController(req: CustomRequest, res: Response, ne
 export async function getAllUsersController(req: CustomRequest, res: Response, next: NextFunction){
     try{
         const userObj = req.user
-        console.log(`all users controller: ${userObj}`)
         const users = await getUsers(userObj._id)
         res.status(200).json({success: true, data: users})
     }
